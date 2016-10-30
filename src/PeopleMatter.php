@@ -60,6 +60,7 @@ class PeopleMatter
     /**
      * Executes a request to the PeopleMatter API
      * @param  string $url    The URL to send to
+     * @param string $method
      * @return mixed          The response data
      */
     protected function request($method, $url, $data)
