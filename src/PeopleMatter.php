@@ -75,7 +75,7 @@ class PeopleMatter
 
     protected function buildUrl($resource)
     {
-        return "https://{$this->host}/api/{$resource}"
+        return "https://{$this->host}/api/{$resource}";
     }
 
     public function getBusinessUnits()
