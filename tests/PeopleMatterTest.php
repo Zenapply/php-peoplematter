@@ -1,8 +1,8 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Api\Tests;
+namespace Zenapply\PeopleMatter\Tests;
 
-use Zenapply\PeopleMatter\Api\PeopleMatter;
+use Zenapply\PeopleMatter\PeopleMatter;
 
 class PeopleMatterTest extends TestCase
 {
@@ -10,7 +10,7 @@ class PeopleMatterTest extends TestCase
 
     public function testItCreatesAnInstanceOfHttpRequest()
     {
-        $r = new PeopleMatter("token");
+        $r = new PeopleMatter("username", "password", "alias");
         $this->assertInstanceOf(PeopleMatter::class, $r);
     }
 }

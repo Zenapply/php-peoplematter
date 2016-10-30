@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Api;
+namespace Zenapply\PeopleMatter;
 
 use GuzzleHttp\Client;
 
@@ -15,110 +15,57 @@ class PeopleMatter
 
     /**
      * Creates a PeopleMatter instance that can register and unregister webhooks with the API
-     * @param string $token   The API token to authenticate with
-     * @param string $version The API version to use
-     * @param string $host    The Host URL
-     * @param string $client  The Client instance that will handle the http request
+     * @param string      $username The Username
+     * @param string      $password The Password
+     * @param string      $alias    The business alias
+     * @param string      $host     The host to connect to
+     * @param Client|null $client   The Guzzle client (used for testing)
      */
-    public function __construct($token, $version = self::V3, $host = "api-ssl.bitly.com", Client $client = null){
-        $this->client = $client;
-        $this->token = $token;
-        $this->version = $version;
-        $this->host = $host;
-    }
-
-    public function shorten($url, $encode = true)
+    public function __construct($username, $password, $alias, $host = "api.peoplematter.com", Client $client = null)
     {
-        if (empty($url)) {
-            throw new BitlyErrorException("The URL is empty!");
-        }
-
-        $url = $this->fixUrl($url, $encode);
-
-        $data = $this->exec($this->buildRequestUrl($url));
-            
-        return $data['data']['url'];
+        $this->alias = $alias;
+        $this->username = $username;
+        $this->password = $password;
+        $this->host = $host;
+        $this->client = $client;
     }
 
-    /**
-     * Returns the response data or throws an Exception if it was unsuccessful
-     * @param  string $raw The data from the response
-     * @return array
-     */
-    protected function handleResponse($raw){
-        $data = json_decode($raw,true);
+    public function hire()
+    {
 
-        if(!isset($data['status_code'])){
-            return $raw;
-        }
-
-        if($data['status_code']>=300 || $data['status_code']<200){
-            switch ($data['status_txt']) {
-                case 'RATE_LIMIT_EXCEEDED':
-                    throw new BitlyRateLimitException;
-                    break;
-
-                case 'INVALID_LOGIN':
-                    throw new BitlyAuthException;
-                    break;
-
-                default:
-                    throw new BitlyErrorException($data['status_txt']);
-                    break;
-            }
-        }
-        return $data;
     }
 
-    /**
-     * Returns a corrected URL
-     * @param  string  $url    The URL to modify
-     * @param  boolean $encode Whether or not to encode the URL
-     * @return string          The corrected URL
-     */
-    protected function fixUrl($url, $encode){
-        if(strpos($url, "http") !== 0){
-            $url = "http://".$url;
-        }
-
-        if($encode){
-            $url = urlencode($url);
-        }
-
-        return $url;
-    }
-
-    /**
-     * Builds the request URL to the PeopleMatter API for a specified action
-     * @param  string $action The long URL
-     * @param  string $action The API action
-     * @return string         The URL
-     */
-    protected function buildRequestUrl($url,$action = "shorten"){
-        return "https://{$this->host}/{$this->version}/{$action}?access_token={$this->token}&format=json&longUrl={$url}";
+    protected function login()
+    {
+        $url = "https://{$this->host}/api/account/login";
+        return $this->request('POST', $url, [
+            'username' => $this->username,
+            'password' => $this->password,
+        ]);
     }
 
     /**
      * Returns the Client instance
      * @return Client
      */
-    protected function getRequest(){
+    protected function getClient()
+    {
         $client = $this->client;
-        if(!$client instanceof Client){
+        if (!$client instanceof Client) {
             $client = new Client();
         }
         return $client;
     }
 
     /**
-     * Executes a CURL request to the PeopleMatter API
+     * Executes a request to the PeopleMatter API
      * @param  string $url    The URL to send to
      * @return mixed          The response data
-     */ 
-    protected function exec($url)
+     */
+    protected function request($method, $url, $data)
     {
-        $client = $this->getRequest();
-        $response = $client->request('GET',$url);
-        return $this->handleResponse($response->getBody());
+        $client = $this->getClient();
+        $response = $client->request($method, $url, ["data" => $data]);
+        return $response->getBody();
     }
 }
