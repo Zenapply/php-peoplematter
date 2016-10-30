@@ -73,13 +73,17 @@ class PeopleMatter
         ]);
     }
 
+    protected function buildUrl($resource)
+    {
+        return "https://{$this->host}/api/{$resource}"
+    }
+
     public function getBusinessUnits()
     {
         $this->login();
-        $units = [];
-        $url = "https://{$this->host}/api/businessunit?businessalias={$this->alias}";
-        $response = $this->request('GET', $url);
+        $response = $this->request('GET', $this->buildUrl("businessunit?businessalias={$this->alias}"));
 
+        $units = [];
         foreach ($response["Records"] as $unit) {
             $units[] = new BusinessUnit($unit);
         }
@@ -87,30 +91,12 @@ class PeopleMatter
         return $units;
     }
 
-    // public function getPerson($email)
-    // {
-    //     if (empty($email)) {
-    //         throw new \Exception("Email is invalid!");
-    //     }
-    //     $this->login();
-    //     $units = [];
-    //     $url = "https://{$this->host}/api/employees/list";
-    //     $response = $this->request('GET', $url);
-    //     var_dump($response);
-    //     foreach ($response["Records"] as $unit) {
-    //         $units[] = new BusinessUnit($unit);
-    //     }
-
-    //     return $units;
-    // }
-
     public function getJobs()
     {
         $this->login();
-        $jobs = [];
-        $url = "https://{$this->host}/api/job?businessalias={$this->alias}";
-        $response = $this->request('GET', $url);
+        $response = $this->request('GET', $this->buildUrl("job?businessalias={$this->alias}"));
 
+        $jobs = [];
         foreach ($response["Jobs"] as $unit) {
             $jobs[] = new Job($unit);
         }
