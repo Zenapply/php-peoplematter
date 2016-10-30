@@ -2,9 +2,9 @@
 
 namespace Zenapply\PeopleMatter;
 
+use DateTime;
 use GuzzleHttp\Client;
 use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
-use DateTime;
 
 class PeopleMatter
 {
