@@ -3,6 +3,8 @@
 namespace Zenapply\PeopleMatter;
 
 use GuzzleHttp\Client;
+use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
+use DateTime;
 
 class PeopleMatter
 {
@@ -12,6 +14,7 @@ class PeopleMatter
     protected $version;
     protected $client;
     protected $token;
+    protected $authenticated = false;
 
     /**
      * Creates a PeopleMatter instance that can register and unregister webhooks with the API
@@ -30,43 +33,144 @@ class PeopleMatter
         $this->client = $client;
     }
 
-    public function hire()
+    public function hire(Person $person, Job $job, BusinessUnit $businessUnit, DateTime $hired_at = null, $timeStatus = "FullTime")
     {
+        $this->login();
 
+        if ($hired_at === null) {
+            $hired_at = new DateTime('now');
+        }
+
+        $url = "https://{$this->host}/api/services/platform/hireemployee";
+
+        return $this->request('POST', $url, [
+            'debug' => true,
+            'json' => [
+                "HireDate" => $hired_at->format("m/d/Y"),
+                "Business" => [
+                    "Alias" => "cafezupassandbox"
+                ],
+                "BusinessUnit" => [
+                    "UnitNumber" => $businessUnit->UnitNumber
+                ],
+                "Person" => $person->toArray(),
+                "JobPositions" => [
+                    [
+                        "Business" => [
+                            "Alias" => "cafezupassandbox"
+                        ],
+                        "BusinessUnit" => [
+                            "UnitNumber" => $businessUnit->UnitNumber
+                        ],
+                        "Job" => [
+                            "Code" => $job->Code,
+                        ],
+                        "TimeStatus" => $timeStatus,
+                        "Person" => $person->toArray(),
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    public function getBusinessUnits()
+    {
+        $this->login();
+        $units = [];
+        $url = "https://{$this->host}/api/businessunit?businessalias={$this->alias}";
+        $response = $this->request('GET', $url);
+
+        foreach ($response["Records"] as $unit) {
+            $units[] = new BusinessUnit($unit);
+        }
+
+        return $units;
+    }
+
+    // public function getPerson($email)
+    // {
+    //     if (empty($email)) {
+    //         throw new \Exception("Email is invalid!");
+    //     }
+    //     $this->login();
+    //     $units = [];
+    //     $url = "https://{$this->host}/api/employees/list";
+    //     $response = $this->request('GET', $url);
+    //     var_dump($response);
+    //     foreach ($response["Records"] as $unit) {
+    //         $units[] = new BusinessUnit($unit);
+    //     }
+
+    //     return $units;
+    // }
+
+    public function getJobs()
+    {
+        $this->login();
+        $jobs = [];
+        $url = "https://{$this->host}/api/job?businessalias={$this->alias}";
+        $response = $this->request('GET', $url);
+
+        foreach ($response["Jobs"] as $unit) {
+            $jobs[] = new Job($unit);
+        }
+
+        return $jobs;
     }
 
     protected function login()
     {
-        $url = "https://{$this->host}/api/account/login";
-        return $this->request('POST', $url, [
-            'username' => $this->username,
-            'password' => $this->password,
-        ]);
+        if ($this->authenticated !== true) {
+            $url = "https://{$this->host}/api/account/login";
+            $this->request('POST', $url, [
+                'form_params' => [
+                    'email' => $this->username,
+                    'password' => $this->password,
+                ]
+            ]);
+            $this->authenticated = true;
+        }
+
+        return $this->authenticated;
     }
 
     /**
      * Returns the Client instance
      * @return Client
      */
-    protected function getClient()
+    public function getClient()
     {
-        $client = $this->client;
-        if (!$client instanceof Client) {
-            $client = new Client();
+        if (!$this->client instanceof Client) {
+            $this->client = new Client([
+                'cookies' => true
+            ]);
         }
-        return $client;
+        return $this->client;
     }
-
+    
     /**
      * Executes a request to the PeopleMatter API
-     * @param  string $url    The URL to send to
-     * @param string $method
-     * @return mixed          The response data
+     * @param  string $method  The request type
+     * @param  string $url     The url to request
+     * @param  array  $options An array of options for the request
+     * @return array           The response as an array
      */
-    protected function request($method, $url, $data)
+    protected function request($method, $url, $options = [])
     {
         $client = $this->getClient();
-        $response = $client->request($method, $url, ["data" => $data]);
-        return $response->getBody();
+        try {
+            $response = $client->request($method, $url, $options);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+            throw new PeopleMatterException($response->getStatusCode().": ".$response->getReasonPhrase(), 1);
+        }
+
+        $json = json_decode($response->getBody(), true);
+
+        if (!empty($json["ErrorMessage"])) {
+            throw new PeopleMatterException($json["ErrorMessage"], $json["ErrorCode"]);
+        }
+
+        return $json;
     }
 }

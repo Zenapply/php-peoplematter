@@ -17,7 +17,58 @@ composer require zenapply/php-peoplematter
 
 ## Usage
 
+Create it
 ```php
-use Zenapply\PeopleMatter\Api\PeopleMatter;
-$client = new PeopleMatter("api_key");
+use Zenapply\PeopleMatter\PeopleMatter;
+$client = new PeopleMatter("email", "password", "businessalias");
+```
+
+Get all Business Units
+```php
+$units = $client->businessUnits(); // Returns an array of Zenapply\PeopleMatter\BusinessUnit Objects
+print_r($units[0]);
+# Zenapply\PeopleMatter\BusinessUnit Object
+# (
+#     [Id] => a1c01c85-fa26-4662-925c-a63b00123456
+#     [Business] => Array
+#         (
+#             [Name] => Company Name
+#             [Alias] => businessalias
+#             [Id] => 77806413-6c3c-40f6-a375-a63b00123456
+#             [URI] => https://sandbox.peoplematter.com/api/business/77806413-6c3c-40f6-a375-a63b0123456
+#         )
+# 
+#     [Name] => Name of Unit
+#     [UnitNumber] => 105
+#     [Status] => 0
+#     [ActivationDate] => 2016-06-29
+#     [DeactivationDate] =>
+#     [Address] => Array
+#         (
+#             [StreetAddress1] => 599 West Main Street
+#             [StreetAddress2] =>
+#             [City] => City
+#             [State] => State
+#             [ZipCode] => 55555
+#             [Country] => US
+#         )
+# 
+#     [TimeZone] => (UTC-07:00) Mountain Time (US & Canada)
+#     [PhoneNumber] => (555) 555-5555
+#     [TaxIdentificationNumber] => 00-0000000
+#     [EmailAddress] => name@email.com
+#     [EverifyEnabled] =>
+#     [I9EmployerName] =>
+#     [BrandNameJobBoards] =>
+#     [IntegrationAttributes] => Array
+#         (
+#             [CustomField1] =>
+#             [CustomField2] =>
+#             [CustomField3] =>
+#         )
+# 
+#     [BusinessUnitGroup] =>
+#     [AssignAllActiveJobs] =>
+# )
+
 ```
