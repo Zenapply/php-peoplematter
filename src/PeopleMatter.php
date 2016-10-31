@@ -79,6 +79,9 @@ class PeopleMatter
         ]);
     }
 
+    /**
+     * @return string
+     */
     protected function buildUrl($resource)
     {
         return "https://{$this->host}/api/{$resource}";
