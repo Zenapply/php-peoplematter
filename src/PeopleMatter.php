@@ -2,8 +2,8 @@
 
 namespace Zenapply\PeopleMatter;
 
-use Exception;
 use DateTime;
+use Exception;
 use GuzzleHttp\Client;
 use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
 
@@ -77,6 +77,9 @@ class PeopleMatter
         ]);
     }
 
+    /**
+     * @return string
+     */
     protected function buildUrl($resource)
     {
         return "https://{$this->host}/api/{$resource}";
