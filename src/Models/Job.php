@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter;
+namespace Zenapply\PeopleMatter\Models;
 
 class Job extends Model
 {

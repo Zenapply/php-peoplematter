@@ -2,10 +2,13 @@
 
 namespace Zenapply\PeopleMatter;
 
-use Exception;
 use DateTime;
+use Exception;
 use GuzzleHttp\Client;
 use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
+use Zenapply\PeopleMatter\Models\BusinessUnit;
+use Zenapply\PeopleMatter\Models\Job;
+use Zenapply\PeopleMatter\Models\Person;
 
 class PeopleMatter
 {
@@ -38,7 +41,7 @@ class PeopleMatter
         $this->login();
 
         if ($hired_at === null) {
-            $hired_at = new DateTime('now');
+            $hired_at = new DateTime("now");
         }
 
         if (!in_array($timeStatus, ["FullTime", "PartTime"])) {
@@ -47,12 +50,11 @@ class PeopleMatter
 
         $url = "https://{$this->host}/api/services/platform/hireemployee";
 
-        return $this->request('POST', $url, [
-            'debug' => true,
-            'json' => [
+        return $this->request("POST", $url, [
+            "json" => [
                 "HireDate" => $hired_at->format("m/d/Y"),
                 "Business" => [
-                    "Alias" => "cafezupassandbox"
+                    "Alias" => $this->alias,
                 ],
                 "BusinessUnit" => [
                     "UnitNumber" => $businessUnit->UnitNumber
@@ -61,7 +63,7 @@ class PeopleMatter
                 "JobPositions" => [
                     [
                         "Business" => [
-                            "Alias" => "cafezupassandbox"
+                            "Alias" => $this->alias,
                         ],
                         "BusinessUnit" => [
                             "UnitNumber" => $businessUnit->UnitNumber
@@ -85,7 +87,11 @@ class PeopleMatter
     public function getBusinessUnits()
     {
         $this->login();
-        $response = $this->request('GET', $this->buildUrl("businessunit?businessalias={$this->alias}"));
+        $response = $this->request("GET", $this->buildUrl("businessunit"), [
+            "query" => [
+                "businessalias" => $this->alias,
+            ]
+        ]);
 
         $units = [];
         foreach ($response["Records"] as $unit) {
@@ -98,7 +104,11 @@ class PeopleMatter
     public function getJobs()
     {
         $this->login();
-        $response = $this->request('GET', $this->buildUrl("job?businessalias={$this->alias}"));
+        $response = $this->request("GET", $this->buildUrl("job"), [
+            "query" => [
+                "businessalias" => $this->alias,
+            ]
+        ]);
 
         $jobs = [];
         foreach ($response["Jobs"] as $unit) {
@@ -115,8 +125,12 @@ class PeopleMatter
         }
         $this->login();
         $units = [];
-        $url = "https://{$this->host}/api/businessunitemployee?businessalias={$this->alias}&PersonEmailAddress={$email}";
-        $response = $this->request('GET', $url);
+        $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
+            "query" => [
+                "businessalias" => $this->alias,
+                "PersonEmailAddress" => $email,
+            ]
+        ]);
 
         foreach ($response["Records"] as $unit) {
             $units[] = new Person($unit);
@@ -125,14 +139,15 @@ class PeopleMatter
         return $units;
     }
 
+
     protected function login()
     {
         if ($this->authenticated !== true) {
             $url = "https://{$this->host}/api/account/login";
-            $this->request('POST', $url, [
-                'form_params' => [
-                    'email' => $this->username,
-                    'password' => $this->password,
+            $this->request("POST", $url, [
+                "form_params" => [
+                    "email" => $this->username,
+                    "password" => $this->password,
                 ]
             ]);
             $this->authenticated = true;
@@ -149,7 +164,7 @@ class PeopleMatter
     {
         if (!$this->client instanceof Client) {
             $this->client = new Client([
-                'cookies' => true
+                "cookies" => true
             ]);
         }
         return $this->client;
@@ -172,7 +187,12 @@ class PeopleMatter
             throw new PeopleMatterException($response->getStatusCode().": ".$response->getReasonPhrase(), 1);
         }
 
-        $json = json_decode($response->getBody(), true);
+        $body = $response->getBody();
+        if (!is_array($body)) {
+            $json = json_decode($body, true);
+        } else {
+            $json = $body;
+        }
 
         if (!empty($json["ErrorMessage"])) {
             throw new PeopleMatterException($json["ErrorMessage"], $json["ErrorCode"]);

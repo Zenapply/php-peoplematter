@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter;
+namespace Zenapply\PeopleMatter\Models;
 
 class BusinessUnit extends Model
 {
