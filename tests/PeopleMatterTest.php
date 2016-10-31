@@ -19,12 +19,12 @@ class PeopleMatterTest extends TestCase
         $this->assertInstanceOf(PeopleMatter::class, $x);
     }
 
-    // public function testGetPerson()
-    // {
-    //     $x = $this->getInstance();
-    //     $response = $x->getPerson("test@dev.com");
-    //     $this->assertInstanceOf(Person::class, $response[0]);
-    // }
+    public function testGetPerson()
+    {
+        $x = $this->getInstance();
+        $response = $x->getPerson("test@dev.com");
+        $this->assertInstanceOf(Person::class, $response[0]);
+    }
 
     public function testGetBusinessUnits()
     {
@@ -47,17 +47,14 @@ class PeopleMatterTest extends TestCase
             "UnitNumber" => 105
         ]);
         $j = new Job([
-            "Code" => 210
+            "Code" => 211
         ]);
         $p = new Person([
             "FirstName" => "Cafe",
             "LastName" => "Zupas",
-            "EmailAddress" => "test1@dev.com",
-            "Username" => "",
-            "Id" => "",
-            "URI" => ""
+            "EmailAddress" => "test@dev.com",
         ]);
-        $response = $x->hire($p, $j, $b, new DateTime('NOW'), "PartTime");
+        $response = $x->hire($p, $j, $b, "PartTime", new DateTime('NOW'));
         var_dump($response);
     }
 

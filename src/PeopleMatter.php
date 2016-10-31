@@ -2,19 +2,19 @@
 
 namespace Zenapply\PeopleMatter;
 
+use Exception;
 use DateTime;
 use GuzzleHttp\Client;
 use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
 
 class PeopleMatter
 {
-    const V3 = 'v3';
-
-    protected $host;
-    protected $version;
-    protected $client;
-    protected $token;
+    protected $alias;
     protected $authenticated = false;
+    protected $client;
+    protected $host;
+    protected $password;
+    protected $username;
 
     /**
      * Creates a PeopleMatter instance that can register and unregister webhooks with the API
@@ -27,18 +27,22 @@ class PeopleMatter
     public function __construct($username, $password, $alias, $host = "api.peoplematter.com", Client $client = null)
     {
         $this->alias = $alias;
-        $this->username = $username;
-        $this->password = $password;
-        $this->host = $host;
         $this->client = $client;
+        $this->host = $host;
+        $this->password = $password;
+        $this->username = $username;
     }
 
-    public function hire(Person $person, Job $job, BusinessUnit $businessUnit, DateTime $hired_at = null, $timeStatus = "FullTime")
+    public function hire(Person $person, Job $job, BusinessUnit $businessUnit, $timeStatus, DateTime $hired_at = null)
     {
         $this->login();
 
         if ($hired_at === null) {
             $hired_at = new DateTime('now');
+        }
+
+        if (!in_array($timeStatus, ["FullTime", "PartTime"])) {
+            throw new Exception("{$timeStatus} is invalid! Please use FullTime or PartTime");
         }
 
         $url = "https://{$this->host}/api/services/platform/hireemployee";
@@ -102,6 +106,23 @@ class PeopleMatter
         }
 
         return $jobs;
+    }
+
+    public function getPerson($email)
+    {
+        if (empty($email)) {
+            throw new Exception("Email is invalid!");
+        }
+        $this->login();
+        $units = [];
+        $url = "https://{$this->host}/api/businessunitemployee?businessalias={$this->alias}&PersonEmailAddress={$email}";
+        $response = $this->request('GET', $url);
+
+        foreach ($response["Records"] as $unit) {
+            $units[] = new Person($unit);
+        }
+
+        return $units;
     }
 
     protected function login()
