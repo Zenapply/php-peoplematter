@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\Response;
 use Zenapply\PeopleMatter\Models\BusinessUnit;
 use Zenapply\PeopleMatter\Models\Job;
 use Zenapply\PeopleMatter\Models\Person;
+use Zenapply\PeopleMatter\Models\Employee;
 use Zenapply\PeopleMatter\PeopleMatter;
 
 class PeopleMatterTest extends TestCase
@@ -38,7 +39,8 @@ class PeopleMatterTest extends TestCase
                 ]]
             ])
         ]);
-        $response = $x->getPerson("test@dev.com");
+        $response = $x->getEmployee("test@dev.com");
+        $this->assertInstanceOf(Employee::class, $response[0]);
         $this->assertInstanceOf(Person::class, $response[0]);
         $this->assertEquals("test@dev.com", $response[0]->EmailAddress);
     }

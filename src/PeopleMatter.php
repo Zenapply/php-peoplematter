@@ -9,6 +9,7 @@ use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
 use Zenapply\PeopleMatter\Models\BusinessUnit;
 use Zenapply\PeopleMatter\Models\Job;
 use Zenapply\PeopleMatter\Models\Person;
+use Zenapply\PeopleMatter\Models\Employee;
 
 class PeopleMatter
 {
@@ -121,7 +122,7 @@ class PeopleMatter
         return $jobs;
     }
 
-    public function getPerson($email)
+    public function getEmployee($email)
     {
         if (empty($email)) {
             throw new Exception("Email is invalid!");
@@ -136,7 +137,7 @@ class PeopleMatter
         ]);
 
         foreach ($response["Records"] as $unit) {
-            $units[] = new Person($unit);
+            $units[] = new Employee($unit);
         }
 
         return $units;
