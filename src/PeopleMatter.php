@@ -128,7 +128,7 @@ class PeopleMatter
             throw new Exception("Email is invalid!");
         }
         $this->login();
-        $units = [];
+        $employees = [];
         $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
             "query" => [
                 "businessalias" => $this->alias,
@@ -137,10 +137,10 @@ class PeopleMatter
         ]);
 
         foreach ($response["Records"] as $unit) {
-            $units[] = new Employee($unit);
+            $employees[] = new Employee($unit);
         }
 
-        return $units;
+        return count($employees) > 0 ? $employees[0] : null;
     }
 
 

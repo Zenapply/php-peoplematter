@@ -40,9 +40,9 @@ class PeopleMatterTest extends TestCase
             ])
         ]);
         $response = $x->getEmployee("test@dev.com");
-        $this->assertInstanceOf(Employee::class, $response[0]);
-        $this->assertInstanceOf(Person::class, $response[0]);
-        $this->assertEquals("test@dev.com", $response[0]->EmailAddress);
+        $this->assertInstanceOf(Employee::class, $response);
+        $this->assertInstanceOf(Person::class, $response);
+        $this->assertEquals("test@dev.com", $response->EmailAddress);
     }
 
     public function testGetBusinessUnits()
