@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Exceptions;
+namespace Zenapply\HRIS\PeopleMatter\Exceptions;
 
 use Exception;
 

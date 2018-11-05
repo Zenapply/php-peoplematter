@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Models;
+namespace Zenapply\HRIS\PeopleMatter\Models;
 
 class Person extends Model
 {

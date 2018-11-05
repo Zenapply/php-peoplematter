@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Tests;
+namespace Zenapply\HRIS\PeopleMatter\Tests;
 
 use DateTime;
 use GuzzleHttp\Client;
@@ -9,11 +9,11 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Zenapply\PeopleMatter\Models\BusinessUnit;
-use Zenapply\PeopleMatter\Models\Job;
-use Zenapply\PeopleMatter\Models\Person;
-use Zenapply\PeopleMatter\Models\Employee;
-use Zenapply\PeopleMatter\PeopleMatter;
+use Zenapply\HRIS\PeopleMatter\Models\BusinessUnit;
+use Zenapply\HRIS\PeopleMatter\Models\Job;
+use Zenapply\HRIS\PeopleMatter\Models\Person;
+use Zenapply\HRIS\PeopleMatter\Models\Employee;
+use Zenapply\HRIS\PeopleMatter\PeopleMatter;
 
 class PeopleMatterTest extends TestCase
 {

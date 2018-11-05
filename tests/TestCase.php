@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Tests;
+namespace Zenapply\HRIS\PeopleMatter\Tests;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {

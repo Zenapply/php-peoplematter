@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenapply\PeopleMatter\Models;
+namespace Zenapply\HRIS\PeopleMatter\Models;
 
 class Job extends Model
 {

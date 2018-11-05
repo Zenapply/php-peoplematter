@@ -1,15 +1,15 @@
 <?php
 
-namespace Zenapply\PeopleMatter;
+namespace Zenapply\HRIS\PeopleMatter;
 
 use DateTime;
 use Exception;
 use GuzzleHttp\Client;
-use Zenapply\PeopleMatter\Exceptions\PeopleMatterException;
-use Zenapply\PeopleMatter\Models\BusinessUnit;
-use Zenapply\PeopleMatter\Models\Job;
-use Zenapply\PeopleMatter\Models\Person;
-use Zenapply\PeopleMatter\Models\Employee;
+use Zenapply\HRIS\PeopleMatter\Exceptions\PeopleMatterException;
+use Zenapply\HRIS\PeopleMatter\Models\BusinessUnit;
+use Zenapply\HRIS\PeopleMatter\Models\Job;
+use Zenapply\HRIS\PeopleMatter\Models\Person;
+use Zenapply\HRIS\PeopleMatter\Models\Employee;
 
 class PeopleMatter
 {
