@@ -12,12 +12,12 @@
     "license": "MIT",  
     "autoload":{
     	"psr-4":{
-            "Zenapply\\PeopleMatter\\":"src/"
+            "Zenapply\\HRIS\\PeopleMatter\\":"src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Zenapply\\PeopleMatter\\Tests\\": "tests/"
+            "Zenapply\\HRIS\\PeopleMatter\\Tests\\": "tests/"
         }
     },
     "require": {

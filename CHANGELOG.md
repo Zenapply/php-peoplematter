@@ -2,6 +2,9 @@
 
 All notable changes to `php-peoplematter` will be documented in this file.
 
+### 2.0.1
+- Fixed psr4 namespace settings
+
 ### 2.0.0
 - Changed namespaces to match our other HRIS libraries
 
