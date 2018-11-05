@@ -1,7 +1,7 @@
 {
     "name": "zenapply/php-peoplematter",
     "type": "library",
-    "description": "",
+    "description": "PeopleMatter API Wrapper",
     "keywords": [
         "php",
         "peoplematter",
