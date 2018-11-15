@@ -13,7 +13,7 @@ use Zenapply\HRIS\PeopleMatter\Models\Employee;
 
 class PeopleMatter
 {
-    protected $alias;
+    protected $business_id;
     protected $authenticated = false;
     protected $client;
     protected $host;
@@ -24,13 +24,13 @@ class PeopleMatter
      * Creates a PeopleMatter instance that can register and unregister webhooks with the API
      * @param string      $username The Username
      * @param string      $password The Password
-     * @param string      $alias    The business alias
+     * @param string      $business_id    The business business_id
      * @param string      $host     The host to connect to
      * @param Client|null $client   The Guzzle client (used for testing)
      */
-    public function __construct($username, $password, $alias, $host = "api.peoplematter.com", Client $client = null)
+    public function __construct($username, $password, $business_id, $host = "api.peoplematter.com", Client $client = null)
     {
-        $this->alias = $alias;
+        $this->business_id = $business_id;
         $this->client = $client;
         $this->host = $host;
         $this->password = $password;
@@ -55,7 +55,7 @@ class PeopleMatter
             "json" => [
                 "HireDate" => $hired_at->format("m/d/Y"),
                 "Business" => [
-                    "Alias" => $this->alias,
+                    "Id" => $this->business_id,
                 ],
                 "BusinessUnit" => [
                     "UnitNumber" => $businessUnit->UnitNumber
@@ -64,7 +64,7 @@ class PeopleMatter
                 "JobPositions" => [
                     [
                         "Business" => [
-                            "Alias" => $this->alias,
+                            "Id" => $this->business_id,
                         ],
                         "BusinessUnit" => [
                             "UnitNumber" => $businessUnit->UnitNumber
@@ -91,16 +91,27 @@ class PeopleMatter
     public function getBusinessUnits()
     {
         $this->login();
-        $response = $this->request("GET", $this->buildUrl("businessunit"), [
-            "query" => [
-                "businessalias" => $this->alias,
-            ]
-        ]);
-
+        
         $units = [];
-        foreach ($response["Records"] as $unit) {
-            $units[] = new BusinessUnit($unit);
-        }
+        $totalPages = 0;
+        $page = 0;
+        $i = 0;
+
+        do {
+            $i++;
+            $response = $this->request("GET", $this->buildUrl("businessunit"), [
+                "query" => [
+                    "BusinessId" => $this->business_id,
+                    "Page" => $page++,
+                ]
+            ]);
+
+            foreach ($response["Records"] as $unit) {
+                $units[] = new BusinessUnit($unit);
+            }
+
+            $totalPages = intval($response["TotalPages"]);
+        } while ($page < $totalPages);
 
         return $units;
     }
@@ -108,16 +119,27 @@ class PeopleMatter
     public function getJobs()
     {
         $this->login();
-        $response = $this->request("GET", $this->buildUrl("job"), [
-            "query" => [
-                "businessalias" => $this->alias,
-            ]
-        ]);
-
+        
         $jobs = [];
-        foreach ($response["Jobs"] as $unit) {
-            $jobs[] = new Job($unit);
-        }
+        $totalPages = 0;
+        $page = 0;
+        $i = 0;
+
+        do {
+            $i++;
+            $response = $this->request("GET", $this->buildUrl("job"), [
+                "query" => [
+                    "BusinessId" => $this->business_id,
+                    "Page" => $page++,
+                ]
+            ]);
+
+            foreach ($response["Jobs"] as $unit) {
+                $jobs[] = new Job($unit);
+            }
+
+            $totalPages = intval($response["TotalPages"]);
+        } while ($page < $totalPages);
 
         return $jobs;
     }
@@ -131,7 +153,7 @@ class PeopleMatter
         $employees = [];
         $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
             "query" => [
-                "businessalias" => $this->alias,
+                "BusinessId" => $this->business_id,
                 "PersonEmailAddress" => $email,
             ]
         ]);

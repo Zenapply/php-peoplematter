@@ -2,6 +2,10 @@
 
 All notable changes to `php-peoplematter` will be documented in this file.
 
+### 3.0.0
+- Now uses Business ID instead of the Business Alias
+- Fixes paginated results
+
 ### 2.0.1
 - Fixed psr4 namespace settings
 
