@@ -14,8 +14,10 @@ class Model
             $this->{$key} = "";
         }
 
-        foreach ($options as $key => $value) {
-            $this->{$key} = $value;
+        if (is_array($options)) {
+            foreach ($options as $key => $value) {
+                $this->{$key} = $value;
+            }
         }
     }
 

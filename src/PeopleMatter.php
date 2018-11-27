@@ -58,7 +58,7 @@ class PeopleMatter
                     "Id" => $this->business_id,
                 ],
                 "BusinessUnit" => [
-                    "UnitNumber" => $businessUnit->UnitNumber
+                    "Id" => $businessUnit->Id
                 ],
                 "Person" => $person->toArray(),
                 "JobPositions" => [
@@ -67,10 +67,10 @@ class PeopleMatter
                             "Id" => $this->business_id,
                         ],
                         "BusinessUnit" => [
-                            "UnitNumber" => $businessUnit->UnitNumber
+                            "Id" => $businessUnit->Id
                         ],
                         "Job" => [
-                            "Code" => $job->Code,
+                            "Id" => $job->Id,
                         ],
                         "TimeStatus" => $timeStatus,
                         "Person" => $person->toArray(),
