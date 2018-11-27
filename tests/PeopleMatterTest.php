@@ -36,7 +36,8 @@ class PeopleMatterTest extends TestCase
                     "EmailAddress" => "test@dev.com",
                     "Username" => "foobar",
                     "Id" => "7f860497-56e6-4033-8fb9-a6af01737795",
-                ]]
+                ]],
+                "TotalPages"=>1
             ])
         ]);
         $response = $x->getEmployee("test@dev.com");
@@ -73,7 +74,8 @@ class PeopleMatterTest extends TestCase
                             "Country" => "US",
                         ],
                     ]
-                ]
+                ],
+                "TotalPages"=>1
             ])
         ]);
         $response = $x->getBusinessUnits();
@@ -97,7 +99,8 @@ class PeopleMatterTest extends TestCase
                         "Title" => "AM Dishwasher",
                         "Description" => "This is the job description for AM Dishwasher",
                     ]
-                ]
+                ],
+                "TotalPages"=>1
             ])
         ]);
         $response = $x->getJobs();
@@ -119,8 +122,8 @@ class PeopleMatterTest extends TestCase
                 ]
             ])
         ]);
-        $b = new BusinessUnit(["UnitNumber" => 105]);
-        $j = new Job(["Code" => 211]);
+        $b = new BusinessUnit(["Id" => "asdflkjasdf-asdf-asdf-asdfasd"]);
+        $j = new Job(["Id" => "asdfasg-asdaf-qweef-asdf"]);
         $p = new Person(["FirstName" => "Cafe", "LastName" => "Zupas", "EmailAddress" => "test2@dev.com"]);
         $response = $x->hire($p, $j, $b, "PartTime", new DateTime('NOW'));
         $this->assertEquals(0, $response["ErrorCount"]);
@@ -129,7 +132,7 @@ class PeopleMatterTest extends TestCase
 
     protected function getInstance($responses = [])
     {
-        return new PeopleMatter("email", "password", "alias", "sandbox.peoplematter.com", $this->getClientMock($responses));
+        return new PeopleMatter("email", "password", "business-id", "sandbox.peoplematter.com", $this->getClientMock($responses));
     }
 
     protected function getClientMock($responses = [])
