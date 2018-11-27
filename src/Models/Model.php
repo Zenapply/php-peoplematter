@@ -25,7 +25,9 @@ class Model
     {
         $arr = [];
         foreach ($this->properties as $key) {
-            $arr[$key] = $this->{$key};
+            if($this->{$key} !== null) {
+                $arr[$key] = $this->{$key};
+            }
         }
         return $arr;
     }

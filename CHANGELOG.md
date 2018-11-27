@@ -2,6 +2,9 @@
 
 All notable changes to `php-peoplematter` will be documented in this file.
 
+### 3.0.2
+- Removed null values from toArray()
+
 ### 3.0.1
 - Fixed people matter hiring
 
