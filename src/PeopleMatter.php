@@ -7,6 +7,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Zenapply\HRIS\PeopleMatter\Exceptions\PeopleMatterException;
 use Zenapply\HRIS\PeopleMatter\Models\BusinessUnit;
+use Zenapply\HRIS\PeopleMatter\Models\BusinessUnitEmployee;
 use Zenapply\HRIS\PeopleMatter\Models\Job;
 use Zenapply\HRIS\PeopleMatter\Models\Person;
 use Zenapply\HRIS\PeopleMatter\Models\Employee;
@@ -99,11 +100,13 @@ class PeopleMatter
 
         do {
             $i++;
+            $query = [
+                "BusinessId" => $this->business_id,
+                "Page" => $page++,
+            ];
+
             $response = $this->request("GET", $this->buildUrl("businessunit"), [
-                "query" => [
-                    "BusinessId" => $this->business_id,
-                    "Page" => $page++,
-                ]
+                "query" => $query,
             ]);
 
             foreach ($response["Records"] as $unit) {
@@ -144,6 +147,25 @@ class PeopleMatter
         return $jobs;
     }
 
+    public function getPerson($id)
+    {
+        if (empty($id)) {
+            throw new Exception("Id is invalid!");
+        }
+        $this->login();
+        $items = [];
+        $response = $this->request("GET", $this->buildUrl("person/{$id}"), [
+            "query" => [
+                "BusinessId" => $this->business_id,
+            ]
+        ]);
+
+        $items[] = new Person($response);
+
+        return count($items) > 0 ? $items[0] : null;
+    }
+
+
     public function getEmployee($email)
     {
         if (empty($email)) {
@@ -165,6 +187,43 @@ class PeopleMatter
         return count($employees) > 0 ? $employees[0] : null;
     }
 
+    
+    public function getEmployees(BusinessUnit $unit = null)
+    {
+        $this->login();
+
+        $items = [];
+        $totalPages = 0;
+        $page = 0;
+        $i = 0;
+
+        do {
+            $i++;
+
+            $query = [
+                "BusinessId" => $this->business_id,
+                "SortBy" => "Person.HireDate",
+                "SortAscending" => "False",
+                "Page" => ++$page,
+            ];
+            
+            if ($unit) {
+                $query["BusinessUnitId"] = $unit->Id;
+            }
+
+            $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
+                "query" => $query
+            ]);
+
+            foreach ($response["Records"] as $item) {
+                $items[] = new BusinessUnitEmployee($item);
+            }
+
+            $totalPages = intval($response["TotalPages"]);
+        } while ($page < $totalPages);
+
+        return $items;
+    }
 
     protected function login()
     {
@@ -210,7 +269,7 @@ class PeopleMatter
             $response = $client->request($method, $url, $options);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $response = $e->getResponse();
-            throw new PeopleMatterException($response->getStatusCode().": ".$response->getReasonPhrase(), 1);
+            throw new PeopleMatterException($response->getStatusCode().": ".$response->getReasonPhrase(), 1, $e);
         }
 
         $body = $response->getBody();
