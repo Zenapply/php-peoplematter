@@ -166,25 +166,20 @@ class PeopleMatter
     }
 
 
-    public function getEmployee($email)
+    public function getEmployee($id)
     {
-        if (empty($email)) {
-            throw new Exception("Email is invalid!");
+        if (empty($id)) {
+            throw new Exception("Id is invalid!");
         }
         $this->login();
         $employees = [];
-        $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
+        $response = $this->request("GET", $this->buildUrl("businessunitemployee/{$id}"), [
             "query" => [
                 "BusinessId" => $this->business_id,
-                "PersonEmailAddress" => $email,
             ]
         ]);
 
-        foreach ($response["Records"] as $unit) {
-            $employees[] = new Employee($unit);
-        }
-
-        return count($employees) > 0 ? $employees[0] : null;
+        return new BusinessUnitEmployee($response);
     }
 
     
@@ -211,12 +206,12 @@ class PeopleMatter
                 $query["BusinessUnitId"] = $unit->Id;
             }
 
-            $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
+            $response = $this->request("GET", $this->buildUrl("unitemployeerecord"), [
                 "query" => $query
             ]);
 
             foreach ($response["Records"] as $item) {
-                $items[] = new BusinessUnitEmployee($item);
+                $items[] = new UnitEmployeeRecord($item);
             }
 
             $totalPages = intval($response["TotalPages"]);

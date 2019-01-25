@@ -2,6 +2,9 @@
 
 All notable changes to `php-peoplematter` will be documented in this file.
 
+### 3.2.0
+- Changed routes for employees
+
 ### 3.1.0
 - Added getPerson function
 
