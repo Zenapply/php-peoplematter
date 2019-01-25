@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use Zenapply\HRIS\PeopleMatter\Exceptions\PeopleMatterException;
 use Zenapply\HRIS\PeopleMatter\Models\BusinessUnit;
 use Zenapply\HRIS\PeopleMatter\Models\BusinessUnitEmployee;
+use Zenapply\HRIS\PeopleMatter\Models\UnitEmployeeRecord;
 use Zenapply\HRIS\PeopleMatter\Models\Job;
 use Zenapply\HRIS\PeopleMatter\Models\Person;
 use Zenapply\HRIS\PeopleMatter\Models\Employee;
