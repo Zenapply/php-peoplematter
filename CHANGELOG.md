@@ -2,6 +2,9 @@
 
 All notable changes to `php-peoplematter` will be documented in this file.
 
+### 3.3.0
+- Added getEmployeeByEmail function
+
 ### 3.2.1
 - Fixed use statement
 

@@ -167,6 +167,24 @@ class PeopleMatter
     }
 
 
+    public function getEmployeeByEmail($email)
+    {
+        if (empty($email)) {
+            throw new Exception("Email is invalid!");
+        }
+        $this->login();
+        $employees = [];
+        $response = $this->request("GET", $this->buildUrl("businessunitemployee"), [
+            "query" => [
+                "BusinessId" => $this->business_id,
+                "PersonEmailAddress" => $email,
+            ]
+        ]);
+
+        return new BusinessUnitEmployee($response);
+    }
+
+
     public function getEmployee($id)
     {
         if (empty($id)) {
