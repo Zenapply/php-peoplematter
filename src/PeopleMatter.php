@@ -181,7 +181,9 @@ class PeopleMatter
             ]
         ]);
 
-        return new BusinessUnitEmployee($response);
+        return !empty($response) 
+            && isset($response["Records"]) 
+            && count($response["Records"]) > 0 ? new BusinessUnitEmployee($response["Records"][0]) : null;
     }
 
 

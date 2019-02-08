@@ -2,6 +2,9 @@
 
 All notable changes to `php-peoplematter` will be documented in this file.
 
+### 3.3.1
+- Returns a null if no records return for getEmployeeByEmail
+
 ### 3.3.0
 - Added getEmployeeByEmail function
 
