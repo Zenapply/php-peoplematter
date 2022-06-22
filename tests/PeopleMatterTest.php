@@ -40,7 +40,7 @@ class PeopleMatterTest extends TestCase
                 "TotalPages"=>1
             ])
         ]);
-        $response = $x->getEmployee("test@dev.com");
+        $response = $x->getEmployeeByEmail("test@dev.com");
         $this->assertInstanceOf(Employee::class, $response);
         $this->assertInstanceOf(Person::class, $response);
         $this->assertEquals("test@dev.com", $response->EmailAddress);

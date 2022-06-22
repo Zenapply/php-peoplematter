@@ -2,9 +2,9 @@
 
 namespace Zenapply\HRIS\PeopleMatter\Models;
 
-class BusinessUnitEmployee extends Model
+class BusinessUnitEmployee extends Employee
 {
-    protected $properties = [
+    // protected $properties = [
 
-    ];
+    // ];
 }
